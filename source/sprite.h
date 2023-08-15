@@ -2,6 +2,8 @@
 #define SPRITE_DEFINED
 #include "constants.h"
 
+//sprite struct; offset is the pixel number which starts sprite in spritesheet; top_screen determines where sprite is rendered;
+//gfx and gfx_frame are graphics memory and pointer to spritesheet
 typedef struct{
   u32 offset;
   bool disabled;
