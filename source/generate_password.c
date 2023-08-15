@@ -1,11 +1,14 @@
 #include <nds.h>
 #include "generate_password.h"
 
+//charset full mode
 const u8 characters_full[] = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+//charset phone mode
 const u8 characters_phone[] = " !\"#$&'()*+,-.0123456789:;=?@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz|";
+//charset simple mode
 const u8 characters_simple[] = " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-
+//One round of mixing around state with key
 void randomizer_round(AES_state* state, AES_key* key){
   AES_encrypt(state, key);
   state_rot(state);
@@ -14,8 +17,9 @@ void randomizer_round(AES_state* state, AES_key* key){
   state_rot(state);
 }
 
+//init key value; Runs 255 rounds on constant state with not-yet big key and then swaps key and state's places making numbers in key pseudo-random
 void init_AES_key_value(AES_key* key){
-  AES_state state = init_AES_state(4217005973,410003557,4123461119,294968239);
+  AES_state state = init_AES_state(4217005973, 410003557, 4123461119, 294968239);
   u8 i;
   for (i = 0; i < 255; i++)
     randomizer_round(&state, key);
@@ -25,7 +29,7 @@ void init_AES_key_value(AES_key* key){
   key->D = state.D;
 }
 
-
+//binsearch in charset for fast conversion between character and integer in range 0-92
 u8 character_to_number(u8 chr){
   u8 p1 = 0, p2 = NUMBER_OF_CHARACTERS_FULL - 1;
   while (p2 - p1 > 1){
@@ -36,6 +40,7 @@ u8 character_to_number(u8 chr){
   return p1;
 }
 
+//initiates states and key with characters from password and runs 255 mixing rounds on that data
 void main_pswd_to_states_1(char* pswd, AES_state* state, AES_key* key, u32 seed, u8 password_lenght){
   u8 i;
   for(i = 0; i < password_lenght; i++){
@@ -71,6 +76,8 @@ void main_pswd_to_states_1(char* pswd, AES_state* state, AES_key* key, u32 seed,
   for(i = 0; i < 255; i++)randomizer_round(state,key);
 }
 
+//initiates states and key with characters from password and runs 255 mixing rounds on that data;
+//this time in slightly different order to get more pseudo-random data from one password
 void main_pswd_to_states_2(char* pswd, AES_state* state, AES_key* key, u32 seed, u8 password_lenght){
   u8 i;
   for(i = 0; i < password_lenght; i++){
@@ -106,6 +113,7 @@ void main_pswd_to_states_2(char* pswd, AES_state* state, AES_key* key, u32 seed,
   for(i = 0; i < 255; i++)randomizer_round(state,key);
 }
 
+//initiates states and keys fills them and runs mixing, then depending on given charset lenght wanted chooses characters for output from that charset
 void main_password_to_final(char* pswd, char* pswd_output, u32 seed, u8 charset_len, u8 password_lenght){
   AES_state state1 = init_AES_state(0,0,0,0);
   AES_key key1 = init_AES_key(0,0,0,0);
@@ -147,13 +155,3 @@ void main_password_to_final(char* pswd, char* pswd_output, u32 seed, u8 charset_
     }
   }
 }
-/*
-int main(){
-  u8 password[30] = "                              ";
-  u8 password_output[30] = "                              ";
-
-  main_password_to_final(password, password_output, 1, 63, 30);
-
-  printf("%s", password_output);
-
-}*/
