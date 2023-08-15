@@ -3,7 +3,7 @@
 
 #include "sprite.h"
 
-
+//Struct defining button; contains button position, sprite defining it and its state
 typedef struct {
   u8 x, y;
   Sprite sprite;
