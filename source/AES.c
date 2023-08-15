@@ -300,6 +300,7 @@ const u32 lutDec3[256] = {
 	0x397101a8, 0x08deb30c, 0xd89ce4b4, 0x6490c156, 0x7b6184cb, 0xd570b632, 0x48745c6c, 0xd04257b8,
 };
 
+//init AES_state struct
 AES_state init_AES_state(u32 A, u32 B, u32 C, u32 D){
   AES_state state;
   state.A = A;
@@ -308,6 +309,8 @@ AES_state init_AES_state(u32 A, u32 B, u32 C, u32 D){
   state.D = D;
   return state;
 }
+
+//init AES_key struct
 AES_key init_AES_key(u32 A, u32 B, u32 C, u32 D){
   AES_key key;
   key.A = A;
@@ -317,6 +320,7 @@ AES_key init_AES_key(u32 A, u32 B, u32 C, u32 D){
   return key;
 }
 
+//Encrypt given state with key
 void AES_encrypt(AES_state* state, AES_key* key) {
 	u32 s0, s1, s2, s3;
 
@@ -325,13 +329,13 @@ void AES_encrypt(AES_state* state, AES_key* key) {
 	s2 = state->C;
 	s3 = state->D;
 
-
 	state->A = lutEnc0[s0 & 0xff] ^ lutEnc1[(s3 >> 8) & 0xff] ^ lutEnc2[(s2 >> 16) & 0xff] ^ lutEnc3[s1 >> 24] ^ key->A;
 	state->B = lutEnc0[s1 & 0xff] ^ lutEnc1[(s0 >> 8) & 0xff] ^ lutEnc2[(s3 >> 16) & 0xff] ^ lutEnc3[s2 >> 24] ^ key->B;
 	state->C = lutEnc0[s2 & 0xff] ^ lutEnc1[(s1 >> 8) & 0xff] ^ lutEnc2[(s0 >> 16) & 0xff] ^ lutEnc3[s3 >> 24] ^ key->C;
 	state->D = lutEnc0[s3 & 0xff] ^ lutEnc1[(s2 >> 8) & 0xff] ^ lutEnc2[(s1 >> 16) & 0xff] ^ lutEnc3[s0 >> 24] ^ key->D;
 }
 
+//Decrypt given state with key
 void AES_decrypt(AES_state* state, AES_key* key) {
 	u32 s0, s1, s2, s3;
 
@@ -346,6 +350,7 @@ void AES_decrypt(AES_state* state, AES_key* key) {
 	state->D = lutDec0[s3 & 0xff] ^ lutDec1[(s0 >> 8) & 0xff] ^ lutDec2[(s1 >> 16) & 0xff] ^ lutDec3[s2 >> 24] ^ key->D;
 }
 
+//Rotate values in state
 void state_rot(AES_state* state){
   u32 temp = state->A;
   state->A = state->B;
@@ -354,6 +359,7 @@ void state_rot(AES_state* state){
   state->D = temp;
 }
 
+//Rotate values in key
 void key_rot(AES_key* key){
   u32 temp = key->A;
   key->A = key->D;
