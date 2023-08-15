@@ -1,10 +1,12 @@
 #ifndef AES_DEFINED
 #define AES_DEFINED
 
+//Struct for state of 128 bits AES 
 typedef struct{
   u32 A,B,C,D;
-} AES_state;
+} AES_state; 
 
+//Struct for key for single round of 128 bits AES
 typedef struct{
   u32 A,B,C,D;
 } AES_key;
