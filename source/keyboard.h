@@ -1,6 +1,9 @@
 #include "button.h"
 #include "constants.h"
 
+
+//keyboard struct; u8 mode variable corresponding to one of the keyboard modes; look in constants.h for further details
+//array of buttons and three single buttons used to change keyboard mode
 typedef struct{
   u8 mode;
 
